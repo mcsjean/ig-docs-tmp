@@ -1,0 +1,905 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Healthcare Provider Financial Benchmarking Tool – St. Gabriel Medical Center</title>
+    <meta name="description" content="Interactive, executive-ready benchmarking dashboard for St. Gabriel Medical Center finance leaders, featuring KPI comparisons, variance analysis, and actionable recommendations.">
+    <meta name="author" content="Finance Strategy & Analytics">
+    <meta name="creation-date" content="2024-06-15">
+    <meta name="update-date" content="2024-06-15">
+    <style>
+        :root {
+            --primary-blue: #4341df;
+            --light-blue: #e0f2fe;
+            --dark-grey: #495057;
+            --light-grey: #f8f9fa;
+            --success-green: #28a745;
+            --danger-red: #dc3545;
+            --warning-orange: #ffc107;
+            --main-font: 'Segoe UI', 'Roboto', 'Helvetica Neue', Arial, sans-serif;
+            --header-height: 64px;
+            --nav-width: 240px;
+            --card-bg: #fff;
+            --card-shadow: 0 2px 8px rgba(0,0,0,0.05);
+            --border-radius: 8px;
+            --table-header-bg: #e0f2fe;
+            --table-row-alt: #f5faff;
+            --table-hover-bg: #eaf6ff;
+        }
+        html {
+            font-size: 16px;
+        }
+        body {
+            margin: 0;
+            font-family: var(--main-font);
+            background: var(--light-grey);
+            color: var(--dark-grey);
+        }
+        header {
+            background: var(--primary-blue);
+            color: #fff;
+            height: var(--header-height);
+            display: flex;
+            align-items: center;
+            padding: 0 2rem;
+            justify-content: space-between;
+            position: sticky;
+            top: 0;
+            z-index: 100;
+        }
+        header .branding {
+            font-size: 1.5rem;
+            font-weight: 700;
+            letter-spacing: 0.02em;
+        }
+        header .contact {
+            font-size: 0.95rem;
+            opacity: 0.85;
+        }
+        nav {
+            position: fixed;
+            top: var(--header-height);
+            left: 0;
+            width: var(--nav-width);
+            height: calc(100vh - var(--header-height));
+            background: #fff;
+            border-right: 1px solid var(--light-blue);
+            padding: 1.5rem 1rem;
+            box-sizing: border-box;
+            z-index: 90;
+            overflow-y: auto;
+        }
+        nav h2 {
+            font-size: 1.1rem;
+            color: var(--primary-blue);
+            margin-bottom: 0.5rem;
+        }
+        nav ul {
+            list-style: none;
+            padding: 0;
+            margin: 0 0 1rem 0;
+        }
+        nav li {
+            margin-bottom: 0.7rem;
+        }
+        nav a {
+            color: var(--dark-grey);
+            text-decoration: none;
+            font-size: 1rem;
+            padding: 0.25rem 0.5rem;
+            border-radius: 4px;
+            display: block;
+            transition: background 0.2s;
+        }
+        nav a:hover, nav a:focus {
+            background: var(--light-blue);
+            color: var(--primary-blue);
+            outline: none;
+        }
+        main {
+            margin-left: var(--nav-width);
+            padding: 2rem 2rem 3rem 2rem;
+            max-width: 1200px;
+        }
+        h1 {
+            font-size: 2rem;
+            color: var(--primary-blue);
+            font-weight: 700;
+            margin-bottom: 0.8rem;
+        }
+        h2 {
+            font-size: 1.4rem;
+            color: var(--primary-blue);
+            margin-top: 2rem;
+            margin-bottom: 0.5rem;
+            font-weight: 600;
+        }
+        h3 {
+            font-size: 1.1rem;
+            margin-top: 1.5rem;
+            margin-bottom: 0.4rem;
+            color: var(--dark-grey);
+        }
+        .cards {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 1.5rem;
+            margin-top: 1.5rem;
+        }
+        .card {
+            background: var(--card-bg);
+            border-radius: var(--border-radius);
+            box-shadow: var(--card-shadow);
+            padding: 1.2rem 1.5rem;
+            flex: 1 1 230px;
+            min-width: 230px;
+            display: flex;
+            flex-direction: column;
+            align-items: flex-start;
+        }
+        .card .kpi-title {
+            font-size: 1rem;
+            color: var(--dark-grey);
+            margin-bottom: 0.25rem;
+        }
+        .card .kpi-value {
+            font-size: 1.7rem;
+            font-weight: 700;
+            margin-bottom: 0.25rem;
+        }
+        .card .kpi-variance {
+            font-size: 1.1rem;
+            font-weight: 500;
+        }
+        .card.positive .kpi-value { color: var(--success-green);}
+        .card.negative .kpi-value { color: var(--danger-red);}
+        .filter-panel {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 1.2rem;
+            align-items: flex-end;
+            margin-bottom: 1.5rem;
+        }
+        .filter-panel label {
+            font-weight: 500;
+            margin-right: 0.5rem;
+            color: var(--dark-grey);
+        }
+        .filter-panel select, .filter-panel button {
+            font-size: 1rem;
+            padding: 0.35rem 0.7rem;
+            border-radius: 4px;
+            border: 1px solid var(--light-blue);
+            background: #fff;
+            color: var(--dark-grey);
+            margin-right: 0.5rem;
+        }
+        .filter-panel button {
+            background: var(--primary-blue);
+            color: #fff;
+            border: none;
+            cursor: pointer;
+            font-weight: 500;
+            margin-left: 0.2rem;
+            transition: background 0.2s;
+        }
+        .filter-panel button:hover, .filter-panel button:focus {
+            background: #0056b3;
+            outline: none;
+        }
+        .table-container {
+            overflow-x: auto;
+            background: var(--card-bg);
+            border-radius: var(--border-radius);
+            box-shadow: var(--card-shadow);
+            margin-top: 1.2rem;
+            margin-bottom: 1.2rem;
+        }
+        table {
+            border-collapse: collapse;
+            width: 100%;
+            min-width: 780px;
+            font-size: 0.97rem;
+        }
+        thead {
+            background: var(--table-header-bg);
+            position: sticky;
+            top: 0;
+            z-index: 2;
+        }
+        th, td {
+            padding: 0.9rem 0.6rem;
+            text-align: left;
+        }
+        th {
+            font-weight: 600;
+            color: var(--primary-blue);
+            cursor: pointer;
+            position: sticky;
+            top: 0;
+            background: var(--table-header-bg);
+            z-index: 1;
+        }
+        tr {
+            transition: background 0.18s;
+        }
+        tbody tr:nth-child(even) {
+            background: var(--table-row-alt);
+        }
+        tbody tr:hover {
+            background: var(--table-hover-bg);
+        }
+        td {
+            vertical-align: middle;
+        }
+        td .action-link {
+            color: var(--primary-blue);
+            text-decoration: underline;
+            cursor: pointer;
+            font-size: 0.97rem;
+        }
+        .tooltip {
+            position: relative;
+            cursor: help;
+        }
+        .tooltip .tooltiptext {
+            visibility: hidden;
+            width: 240px;
+            background: #333;
+            color: #fff;
+            text-align: left;
+            border-radius: 4px;
+            padding: 0.6rem;
+            position: absolute;
+            z-index: 10;
+            bottom: 120%;
+            left: 50%;
+            transform: translateX(-50%);
+            font-size: 0.93rem;
+            box-shadow: 0 2px 8px rgba(0,0,0,0.13);
+            opacity: 0;
+            transition: opacity 0.2s;
+        }
+        .tooltip:focus .tooltiptext, .tooltip:hover .tooltiptext {
+            visibility: visible;
+            opacity: 1;
+        }
+        .charts-section {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 2.2rem;
+            margin-top: 2rem;
+        }
+        .chart-card {
+            background: var(--card-bg);
+            border-radius: var(--border-radius);
+            box-shadow: var(--card-shadow);
+            padding: 1.2rem 1rem 1.7rem 1rem;
+            flex: 1 1 420px;
+            min-width: 320px;
+            display: flex;
+            flex-direction: column;
+            align-items: stretch;
+        }
+        .chart-caption {
+            font-size: 1rem;
+            margin-top: 0.7rem;
+            color: var(--dark-grey);
+            font-style: italic;
+        }
+        ul.priority-actions {
+            background: var(--card-bg);
+            border-radius: var(--border-radius);
+            box-shadow: var(--card-shadow);
+            padding: 1rem 1.5rem;
+            margin-bottom: 1.5rem;
+            margin-top: 1rem;
+        }
+        ul.priority-actions li {
+            margin-bottom: 0.7rem;
+            font-size: 1.06rem;
+        }
+        .footnote-ref {
+            font-size: 0.9em;
+        }
+        footer {
+            background: var(--primary-blue);
+            color: #fff;
+            padding: 1.3rem 2rem;
+            font-size: 0.95rem;
+            text-align: right;
+            position: relative;
+            z-index: 10;
+            margin-top: 2rem;
+        }
+        .meta {
+            font-size: 0.93rem;
+            color: var(--dark-grey);
+            margin-bottom: 1.5rem;
+            opacity: 0.85;
+        }
+        @media (max-width: 1100px) {
+            main {
+                max-width: 100vw;
+                padding: 1.3rem 1rem 2rem 1rem;
+            }
+            nav {
+                width: 180px;
+                padding: 1rem 0.5rem;
+            }
+        }
+        @media (max-width: 900px) {
+            main { margin-left: 0; }
+            nav {
+                position: static;
+                width: 100%;
+                height: auto;
+                border-right: none;
+                border-bottom: 1px solid var(--light-blue);
+                display: flex;
+                flex-direction: row;
+                overflow-x: auto;
+                padding: 0.7rem 0.3rem;
+            }
+            nav ul { flex-direction: row; display: flex; gap: 1.2rem;}
+            nav li { margin-bottom: 0; }
+        }
+        @media (max-width: 700px) {
+            .cards, .charts-section {
+                flex-direction: column;
+                gap: 1rem;
+            }
+            .card, .chart-card {
+                min-width: 100%;
+            }
+            .meta { font-size: 0.87rem;}
+        }
+        @media (max-width: 500px) {
+            header, footer {
+                padding: 0.7rem 0.7rem;
+            }
+            .filter-panel {
+                flex-direction: column;
+                gap: 0.6rem;
+            }
+            table {
+                font-size: 0.89rem;
+            }
+            .chart-caption { font-size: 0.92rem;}
+        }
+    </style>
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+</head>
+<body>
+    <header>
+        <span class="branding" aria-label="St. Gabriel Medical Center">St. Gabriel Medical Center</span>
+        <span class="contact" aria-label="Finance Strategy &amp; Analytics Contact">Finance Strategy &amp; Analytics | finance@stgabrielmc.org</span>
+    </header>
+    <nav aria-label="Dashboard navigation">
+        <ul>
+            <li><a href="#overview">Overview</a></li>
+            <li><a href="#kpi-benchmarks">KPI Benchmarks &amp; Filters</a></li>
+            <li><a href="#variance-analysis">Variance Analysis &amp; Visuals</a></li>
+            <li><a href="#recommended-actions">Recommended Actions</a></li>
+            <li><a href="#data-notes">Data Notes &amp; Sources</a></li>
+        </ul>
+    </nav>
+    <main>
+    
+        <h1 id="overview">Healthcare Provider Financial Benchmarking Tool</h1>
+        <section>
+            <h2>Overview</h2>
+            <p>
+                This executive dashboard provides a comprehensive comparison of St. Gabriel Medical Center's financial performance against peer hospitals. The tool facilitates strategic decision-making by benchmarking key metrics such as operating margin, revenue cycle efficiency, cost structure, and productivity. Data are drawn from internal systems and verified external sources, enabling leaders to assess areas of strength and opportunity.
+            </p>
+            <p>
+                Variances between our results and peer benchmarks highlight where operational improvements or investments may be warranted. The dashboard supports monthly and quarterly reviews, board packet preparation, and service line planning, ensuring our leadership remains data-driven and proactive.
+            </p>
+            <p>
+                Each KPI is hyperlinked for detailed interpretation and recommended actions. Filters allow you to tailor comparisons by region, bed size, ownership, service line, and timeframe, enhancing relevance for various decision-making scenarios.
+            </p>
+            <p>
+                Action recommendations are prioritized to drive margin enhancement, cost optimization, and improved productivity. The interactive charts and sortable tables make it easy to identify areas of high variance and drill down for targeted interventions.
+            </p>
+            <p>
+                Please refer to the footnotes for data sources, definitions, and limitations. For further guidance, contact Finance Strategy &amp; Analytics.<sup><a href="#fn1" id="ref1" class="footnote-ref">1</a></sup>
+            </p>
+        </section>
+
+        <section id="kpi-benchmarks">
+            <h2>KPI Benchmarks &amp; Filters</h2>
+            <form class="filter-panel" aria-label="Benchmark Filters">
+                <fieldset>
+                    <legend>Filter Peer Benchmarks</legend>
+                    <label for="region">Region:</label>
+                    <select id="region" name="region" tabindex="0">
+                        <option value="all">All</option>
+                        <option value="midwest">Midwest</option>
+                        <option value="northeast">Northeast</option>
+                        <option value="south">South</option>
+                        <option value="west">West</option>
+                    </select>
+                    <label for="bedsize">Bed Size Band:</label>
+                    <select id="bedsize" name="bedsize" tabindex="0">
+                        <option value="all">All</option>
+                        <option value="small">0–99</option>
+                        <option value="medium">100–299</option>
+                        <option value="large">300+</option>
+                    </select>
+                    <label for="ownership">Ownership Type:</label>
+                    <select id="ownership" name="ownership" tabindex="0">
+                        <option value="all">All</option>
+                        <option value="nonprofit">Nonprofit</option>
+                        <option value="forprofit">For-Profit</option>
+                        <option value="government">Government</option>
+                    </select>
+                    <label for="serviceline">Service Line:</label>
+                    <select id="serviceline" name="serviceline" tabindex="0">
+                        <option value="all">All</option>
+                        <option value="acute">Acute</option>
+                        <option value="ambulatory">Ambulatory</option>
+                        <option value="behavioral">Behavioral Health</option>
+                        <option value="postacute">Post-Acute</option>
+                    </select>
+                    <label for="timeframe">Timeframe:</label>
+                    <select id="timeframe" name="timeframe" tabindex="0">
+                        <option value="current">Current FY</option>
+                        <option value="ytd">Year-to-Date</option>
+                        <option value="qtr">Quarterly</option>
+                        <option value="prior">Prior FY</option>
+                    </select>
+                    <button type="button" id="resetFilters" tabindex="0" aria-label="Reset filters">Reset Filters</button>
+                    <button type="button" id="exportCSV" tabindex="0" aria-label="Export table as CSV">Export CSV</button>
+                </fieldset>
+            </form>
+            <div class="cards" aria-label="KPI Summary Cards">
+                <article class="card positive" tabindex="0">
+                    <span class="kpi-title">Net Operating Margin (%)</span>
+                    <span class="kpi-value">5.4</span>
+                    <span class="kpi-variance" style="color: var(--success-green);">+1.2 vs. Peer Median</span>
+                </article>
+                <article class="card positive" tabindex="0">
+                    <span class="kpi-title">EBITDA Margin (%)</span>
+                    <span class="kpi-value">12.6</span>
+                    <span class="kpi-variance" style="color: var(--success-green);">+2.1 vs. Peer Median</span>
+                </article>
+                <article class="card negative" tabindex="0">
+                    <span class="kpi-title">Days in AR</span>
+                    <span class="kpi-value">51</span>
+                    <span class="kpi-variance" style="color: var(--danger-red);">+8 vs. Peer Median</span>
+                </article>
+                <article class="card negative" tabindex="0">
+                    <span class="kpi-title">Denial Rate (%)</span>
+                    <span class="kpi-value">6.9</span>
+                    <span class="kpi-variance" style="color: var(--danger-red);">+1.9 vs. Peer Median</span>
+                </article>
+                <article class="card" tabindex="0">
+                    <span class="kpi-title">Cost/Adj. Discharge ($)</span>
+                    <span class="kpi-value">8,370</span>
+                    <span class="kpi-variance" style="color: var(--warning-orange);">+210 vs. Peer Median</span>
+                </article>
+                <article class="card positive" tabindex="0">
+                    <span class="kpi-title">FTEs per Adjusted Occupied Bed</span>
+                    <span class="kpi-value">4.1</span>
+                    <span class="kpi-variance" style="color: var(--success-green);">-0.3 vs. Peer Median</span>
+                </article>
+            </div>
+        </section>
+
+        <section id="variance-analysis">
+            <h2>Variance Analysis &amp; Visuals</h2>
+            <p>
+                The table below details your performance across flagship financial metrics, highlighting variances to peer median and top quartile. Metrics with positive performance are shown in green; negative variances in red or orange. Sort columns to prioritize review areas, and use metric links for deeper interpretation and recommended actions.
+            </p>
+            <div class="table-container" aria-label="Financial KPI Benchmark Table">
+                <table id="kpiTable">
+                    <thead>
+                        <tr>
+                            <th scope="col" tabindex="0" aria-label="Sort by Metric">Metric</th>
+                            <th scope="col" tabindex="0" aria-label="Sort by Your Value">Your Value</th>
+                            <th scope="col" tabindex="0" aria-label="Sort by Peer Median">Peer Median</th>
+                            <th scope="col" tabindex="0" aria-label="Sort by Top Quartile">Top Quartile</th>
+                            <th scope="col" tabindex="0" aria-label="Sort by Variance to Median">Variance to Median</th>
+                            <th scope="col" tabindex="0" aria-label="Sort by Variance to Top Quartile">Variance to Top Quartile</th>
+                            <th scope="col">Suggested Action</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <tr>
+                            <td>
+                                <a href="#netoperatingmargin" class="action-link tooltip" tabindex="0">Net Operating Margin (%)<span class="tooltiptext">Operating margin reflects overall profitability after operating expenses. Target >4.5% for sustainability.</span></a>
+                            </td>
+                            <td>5.4</td>
+                            <td>4.2</td>
+                            <td>6.1</td>
+                            <td style="color: var(--success-green);">+1.2</td>
+                            <td style="color: var(--warning-orange);">-0.7</td>
+                            <td><a href="#action1" class="action-link">Review cost drivers</a></td>
+                        </tr>
+                        <tr>
+                            <td>
+                                <a href="#ebitda" class="action-link tooltip" tabindex="0">EBITDA Margin (%)<span class="tooltiptext">EBITDA margin measures cash operating profitability. Higher margins allow for reinvestment.</span></a>
+                            </td>
+                            <td>12.6</td>
+                            <td>10.5</td>
+                            <td>14.2</td>
+                            <td style="color: var(--success-green);">+2.1</td>
+                            <td style="color: var(--warning-orange);">-1.6</td>
+                            <td><a href="#action2" class="action-link">Enhance payer mix</a></td>
+                        </tr>
+                        <tr>
+                            <td>
+                                <a href="#daysinar" class="action-link tooltip" tabindex="0">Days in AR<span class="tooltiptext">Average days accounts receivable are outstanding. Lower is better; aim for ≤43 days.</span></a>
+                            </td>
+                            <td>51</td>
+                            <td>43</td>
+                            <td>38</td>
+                            <td style="color: var(--danger-red);">+8</td>
+                            <td style="color: var(--danger-red);">+13</td>
+                            <td><a href="#action3" class="action-link">Accelerate collections</a></td>
+                        </tr>
+                        <tr>
+                            <td>
+                                <a href="#denialrate" class="action-link tooltip" tabindex="0">Denial Rate (%)<span class="tooltiptext">Percent of claims denied. Lower rates improve net revenue. Target <5%.</span></a>
+                            </td>
+                            <td>6.9</td>
+                            <td>5.0</td>
+                            <td>3.7</td>
+                            <td style="color: var(--danger-red);">+1.9</td>
+                            <td style="color: var(--danger-red);">+3.2</td>
+                            <td><a href="#action4" class="action-link">Audit denials</a></td>
+                        </tr>
+                        <tr>
+                            <td>
+                                <a href="#costperdischarge" class="action-link tooltip" tabindex="0">Cost/Adj. Discharge ($)<span class="tooltiptext">Total cost per adjusted discharge. Lower cost improves margin. Monitor for efficiency.</span></a>
+                            </td>
+                            <td>8,370</td>
+                            <td>8,160</td>
+                            <td>7,650</td>
+                            <td style="color: var(--warning-orange);">+210</td>
+                            <td style="color: var(--danger-red);">+720</td>
+                            <td><a href="#action5" class="action-link">Drive process improvements</a></td>
+                        </tr>
+                        <tr>
+                            <td>
+                                <a href="#ftepab" class="action-link tooltip" tabindex="0">FTEs per Adj. Occupied Bed<span class="tooltiptext">Staffing efficiency. Lower FTEs per bed indicate better productivity.</span></a>
+                            </td>
+                            <td>4.1</td>
+                            <td>4.4</td>
+                            <td>3.7</td>
+                            <td style="color: var(--success-green);">-0.3</td>
+                            <td style="color: var(--warning-orange);">+0.4</td>
+                            <td><a href="#action6" class="action-link">Optimize schedules</a></td>
+                        </tr>
+                    </tbody>
+                </table>
+            </div>
+            <div class="chart-caption">
+                Table shows largest negative variances in revenue cycle, denials, and cost per discharge—key focus areas for performance improvement.
+            </div>
+
+            <div class="charts-section" aria-label="KPI Comparison Visuals">
+                <div class="chart-card">
+                    <h3>Flagship KPI Group Bar Chart</h3>
+                    <canvas id="barChart" width="400" height="220" aria-label="Financial KPI Comparison Bar Chart" role="img"></canvas>
+                    <div class="chart-caption">
+                        Your margins outperform peer medians, but revenue cycle and cost variances highlight actionable improvement opportunities.
+                    </div>
+                </div>
+                <div class="chart-card">
+                    <h3>Financial Index Radar Chart</h3>
+                    <canvas id="radarChart" width="400" height="220" aria-label="Overall Financial Index Spider Chart" role="img"></canvas>
+                    <div class="chart-caption">
+                        Radar chart reveals leadership in profitability, with efficiency and revenue cycle lagging peer benchmarks.
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <section id="recommended-actions">
+            <h2>Recommended Actions</h2>
+            <p>
+                Results indicate targeted interventions are needed in revenue cycle and cost structure, while margin and productivity remain competitive. The following priority actions are recommended for the upcoming quarter, with anticipated financial impact and timelines:
+            </p>
+            <ul class="priority-actions" aria-label="Priority Actions This Quarter">
+                <li>Accelerate AR follow-up to reduce Days in AR by 6+ days within 90 days.</li>
+                <li>Conduct root cause analysis of denied claims; implement top-3 fixes by month-end.</li>
+                <li>Engage payer relations team to improve payer mix and renegotiate contracts by Q4.</li>
+                <li>Initiate cost containment review in high-cost service lines; report savings opportunities in 60 days.</li>
+                <li>Expand Lean process improvement pilots for discharge workflows.</li>
+                <li>Optimize staffing schedules to match patient volumes, targeting a 5% reduction in overtime costs.</li>
+                <li>Update denial management training for front-line revenue cycle staff this month.</li>
+                <li>Monitor and report progress monthly to Finance Leadership Team and Board.</li>
+            </ul>
+            <p>
+                Executing these actions is expected to improve net margin by 0.8–1.5 points and reduce excess costs by $0.7–1.2M over the next two quarters.
+            </p>
+        </section>
+
+        <section id="data-notes">
+            <h2>Data Notes &amp; Sources</h2>
+            <p>
+                Benchmark data are sourced from the St. Gabriel internal financial reporting system, Premier Healthcare Database, and Modern Healthcare’s annual survey.<sup><a href="#fn1" id="ref2" class="footnote-ref">1</a></sup> Peer group selection is filterable above. Metrics definitions and calculation methods are available in the <a href="https://intranet.stgabrielmc.org/finance/metric-definitions" target="_blank">internal KPI handbook</a>.
+            </p>
+            <p>
+                Limitations: Data reflect the most recent quarter and may lag in peer group updates. Outliers are excluded from median and quartile calculations. For further clarification, contact Finance Strategy &amp; Analytics.
+            </p>
+        </section>
+
+        <section id="metric-details">
+            <h2 style="margin-top:2.5rem;">Metric Details &amp; Suggested Actions</h2>
+            <article id="netoperatingmargin">
+                <h3>Net Operating Margin (%)</h3>
+                <p>
+                    <strong>Interpretation:</strong> Measures overall profitability after operating expenses. Positive variance indicates strong performance, but continued monitoring is needed to sustain gains. 
+                </p>
+                <p>
+                    <strong>Suggested Actions:</strong> Review cost drivers regularly and assess opportunities for revenue enhancement. Consider reinvesting surplus margin in strategic growth areas.
+                </p>
+            </article>
+            <article id="ebitda">
+                <h3>EBITDA Margin (%)</h3>
+                <p>
+                    <strong>Interpretation:</strong> Indicates core operating profitability excluding non-cash expenses. Higher EBITDA supports capital needs and resilience.
+                </p>
+                <p>
+                    <strong>Suggested Actions:</strong> Strengthen payer mix, manage expenses, and invest in service lines with high EBITDA contribution.
+                </p>
+            </article>
+            <article id="daysinar">
+                <h3>Days in AR</h3>
+                <p>
+                    <strong>Interpretation:</strong> Elevated Days in AR signal slower cash collections and potential revenue leakage. Current results are above target and median.
+                </p>
+                <p>
+                    <strong>Suggested Actions:</strong> Accelerate AR follow-up, automate billing processes, and engage with payers to resolve outstanding accounts.
+                </p>
+            </article>
+            <article id="denialrate">
+                <h3>Denial Rate (%)</h3>
+                <p>
+                    <strong>Interpretation:</strong> High denial rates reduce net revenue and increase administrative costs. Current rates suggest process gaps and need for staff education.
+                </p>
+                <p>
+                    <strong>Suggested Actions:</strong> Audit denials, implement targeted staff training, and automate claim correction workflows.
+                </p>
+            </article>
+            <article id="costperdischarge">
+                <h3>Cost per Adjusted Discharge ($)</h3>
+                <p>
+                    <strong>Interpretation:</strong> Higher costs per discharge may reflect inefficiencies or case mix complexity. Review for outliers and process bottlenecks.
+                </p>
+                <p>
+                    <strong>Suggested Actions:</strong> Drive Lean process improvements, review supply chain contracts, and benchmark service line costs.
+                </p>
+            </article>
+            <article id="ftepab">
+                <h3>FTEs per Adjusted Occupied Bed</h3>
+                <p>
+                    <strong>Interpretation:</strong> Staffing efficiency is strong relative to peers, but further optimization may yield savings.
+                </p>
+                <p>
+                    <strong>Suggested Actions:</strong> Continue schedule optimization, cross-train staff, and monitor overtime usage.
+                </p>
+            </article>
+        </section>
+
+        <section id="footnotes">
+            <h2>References</h2>
+            <ol>
+                <li id="fn1">Benchmark sources: Premier Healthcare Database, Modern Healthcare, internal reporting. Data subject to quarterly updates. <a href="#ref1" aria-label="Back to reference">↩</a> <a href="#ref2" aria-label="Back to reference">↩</a></li>
+            </ol>
+        </section>
+    </main>
+    <footer>
+        © 2024 St. Gabriel Medical Center | Finance Strategy &amp; Analytics | finance@stgabrielmc.org
+    </footer>
+    <script>
+        // Sortable Table Logic
+        const table = document.getElementById('kpiTable');
+        const headers = table.querySelectorAll('th');
+        let sortDirection = Array(headers.length).fill(true);
+
+        headers.forEach((header, idx) => {
+            header.addEventListener('click', () => sortTable(idx));
+            header.addEventListener('keydown', (e) => {
+                if (e.key === 'Enter' || e.key === ' ') {
+                    e.preventDefault();
+                    sortTable(idx);
+                }
+            });
+        });
+
+        function sortTable(colIdx) {
+            const tbody = table.tBodies[0];
+            const rows = Array.from(tbody.rows);
+            const isNumeric = (idx) => [1,2,3,4,5].includes(idx);
+            rows.sort((a, b) => {
+                let valA = a.cells[colIdx].textContent.trim().replace(/,/g,"");
+                let valB = b.cells[colIdx].textContent.trim().replace(/,/g,"");
+                if (isNumeric(colIdx)) {
+                    valA = parseFloat(valA) || 0;
+                    valB = parseFloat(valB) || 0;
+                }
+                return sortDirection[colIdx] ? (valA > valB ? 1 : valA < valB ? -1 : 0) : (valA < valB ? 1 : valA > valB ? -1 : 0);
+            });
+            sortDirection[colIdx] = !sortDirection[colIdx];
+            rows.forEach(row => tbody.appendChild(row));
+        }
+
+        // Filter Panel Logic (synthetic, no backend)
+        const filters = ['region','bedsize','ownership','serviceline','timeframe'];
+        document.getElementById('resetFilters').onclick = () => {
+            filters.forEach(id => document.getElementById(id).selectedIndex = 0);
+        };
+        document.getElementById('exportCSV').onclick = () => {
+            let csv = [];
+            const rows = table.querySelectorAll('tr');
+            rows.forEach(row => {
+                let rowData = [];
+                row.querySelectorAll('th,td').forEach(cell => {
+                    rowData.push('"' + cell.textContent.replace(/"/g, '""') + '"');
+                });
+                csv.push(rowData.join(','));
+            });
+            const blob = new Blob([csv.join('\n')], {type: 'text/csv'});
+            const link = document.createElement('a');
+            link.href = URL.createObjectURL(blob);
+            link.download = 'financial_kpi_benchmark.csv';
+            document.body.appendChild(link);
+            link.click();
+            document.body.removeChild(link);
+        };
+
+        // Chart.js Bar Chart
+        const barCtx = document.getElementById('barChart').getContext('2d');
+        const barChart = new Chart(barCtx, {
+            type: 'bar',
+            data: {
+                labels: [
+                    'Net Operating Margin (%)',
+                    'EBITDA Margin (%)',
+                    'Days in AR',
+                    'Denial Rate (%)',
+                    'Cost/Adj. Discharge ($)',
+                    'FTEs/Occ. Bed'
+                ],
+                datasets: [
+                    {
+                        label: 'Your Value',
+                        data: [5.4, 12.6, 51, 6.9, 8370, 4.1],
+                        backgroundColor: [
+                            'rgba(40,167,69,0.7)',
+                            'rgba(40,167,69,0.7)',
+                            'rgba(220,53,69,0.7)',
+                            'rgba(220,53,69,0.7)',
+                            'rgba(255,193,7,0.7)',
+                            'rgba(40,167,69,0.7)'
+                        ],
+                        borderColor: [
+                            'rgba(40,167,69,1)',
+                            'rgba(40,167,69,1)',
+                            'rgba(220,53,69,1)',
+                            'rgba(220,53,69,1)',
+                            'rgba(255,193,7,1)',
+                            'rgba(40,167,69,1)'
+                        ],
+                        borderWidth: 1
+                    },
+                    {
+                        label: 'Peer Median',
+                        data: [4.2, 10.5, 43, 5.0, 8160, 4.4],
+                        backgroundColor: 'rgba(0,123,255,0.6)',
+                        borderColor: 'rgba(0,123,255,1)',
+                        borderWidth: 1
+                    },
+                    {
+                        label: 'Top Quartile',
+                        data: [6.1, 14.2, 38, 3.7, 7650, 3.7],
+                        backgroundColor: 'rgba(0,123,255,0.3)',
+                        borderColor: 'rgba(0,123,255,0.7)',
+                        borderWidth: 1
+                    }
+                ]
+            },
+            options: {
+                responsive: true,
+                plugins: {
+                    legend: {position: 'top'},
+                    title: {
+                        display: true,
+                        text: 'KPI Benchmark Comparison',
+                        color: '#007bff',
+                        font: {size:16}
+                    },
+                    tooltip: {
+                        callbacks: {
+                            label: function(context) {
+                                return context.dataset.label + ': ' + context.parsed.y;
+                            }
+                        }
+                    }
+                },
+                scales: {
+                    y: {
+                        beginAtZero: true,
+                        ticks: {color: '#495057'},
+                        grid: {color: '#e0f2fe'}
+                    },
+                    x: {ticks: {color: '#495057'}}
+                }
+            }
+        });
+
+        // Chart.js Radar Chart
+        const radarCtx = document.getElementById('radarChart').getContext('2d');
+        const radarChart = new Chart(radarCtx, {
+            type: 'radar',
+            data: {
+                labels: [
+                    'Profitability',
+                    'Revenue Cycle',
+                    'Cost Efficiency',
+                    'Productivity',
+                    'Denials',
+                    'Staffing'
+                ],
+                datasets: [
+                    {
+                        label: 'Your Index',
+                        data: [80, 58, 65, 78, 60, 77],
+                        backgroundColor: 'rgba(0,123,255,0.19)',
+                        borderColor: 'rgba(0,123,255,1)',
+                        pointBackgroundColor: 'rgba(0,123,255,1)',
+                        pointBorderColor: '#fff'
+                    },
+                    {
+                        label: 'Peer Median',
+                        data: [72, 70, 73, 70, 78, 73],
+                        backgroundColor: 'rgba(40,167,69,0.13)',
+                        borderColor: 'rgba(40,167,69,0.85)',
+                        pointBackgroundColor: 'rgba(40,167,69,1)',
+                        pointBorderColor: '#fff'
+                    },
+                    {
+                        label: 'Top Quartile',
+                        data: [89, 82, 87, 83, 91, 88],
+                        backgroundColor: 'rgba(255,193,7,0.11)',
+                        borderColor: 'rgba(255,193,7,0.9)',
+                        pointBackgroundColor: 'rgba(255,193,7,1)',
+                        pointBorderColor: '#fff'
+                    }
+                ]
+            },
+            options: {
+                responsive: true,
+                plugins: {
+                    legend: {position: 'top'},
+                    title: {
+                        display: true,
+                        text: 'Overall Financial Index Comparison',
+                        color: '#007bff',
+                        font: {size:16}
+                    }
+                },
+                scales: {
+                    r: {
+                        angleLines: {color: '#e0f2fe'},
+                        grid: {color: '#e0f2fe'},
+                        pointLabels: {color: '#495057'},
+                        min: 0,
+                        max: 100,
+                        ticks: {color: '#495057', stepSize: 20}
+                    }
+                }
+            }
+        });
+
+        // Focusable tooltips for accessibility
+        document.querySelectorAll('.tooltip').forEach(el => {
+            el.setAttribute('tabindex', '0');
+        });
+    </script>
+</body>
+</html>

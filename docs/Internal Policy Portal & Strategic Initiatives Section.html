@@ -1,0 +1,549 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>SGMC Internal Policy Portal – Strategic Initiatives</title>
+    <meta name="description" content="Interactive dashboard presenting SGMC’s strategic initiatives for staff, leadership, and stakeholders.">
+    <meta name="author" content="St. Gabriel Medical Center">
+    <meta name="creation-date" content="2024-06-26">
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+    <style>
+        :root {
+            --header-charcoal: #585063;
+            --warm-sand: #F2E9DC;
+            --terracotta: #E7996C;
+            --crisp-white: #FFFFFF;
+            --dusty-rose: #CE7FA4;
+            --font-main: 'Segoe UI', 'Roboto', Arial, sans-serif;
+            --font-size-base: 1rem;
+            --font-size-lg: 1.5rem;
+            --font-size-xl: 2rem;
+            --spacing-xs: 0.5rem;
+            --spacing-sm: 1rem;
+            --spacing-md: 2rem;
+            --spacing-lg: 3rem;
+            --card-shadow: 0 2px 10px rgba(88,80,99,0.07);
+            --border-radius: 0.8rem;
+            --table-header-bg: #F2E9DC;
+            --table-row-alt: #FCF7F1;
+            --table-hover: #E7996C22;
+            --text-dark: #34303A;
+            --text-muted: #726A7B;
+        }
+
+        html, body {
+            margin: 0;
+            padding: 0;
+            background: var(--crisp-white);
+            color: var(--text-dark);
+            font-family: var(--font-main);
+            font-size: var(--font-size-base);
+        }
+
+        header {
+            background: var(--header-charcoal);
+            color: var(--crisp-white);
+            display: flex;
+            align-items: center;
+            padding: var(--spacing-md) var(--spacing-lg);
+            gap: var(--spacing-md);
+        }
+
+        .sgmc-logo {
+            width: 54px;
+            height: 54px;
+            background: none;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            border-radius: 50%;
+            margin-right: var(--spacing-sm);
+        }
+
+        .sgmc-logo svg {
+            display: block;
+            width: 100%;
+            height: 100%;
+        }
+
+        .sgmc-title {
+            font-size: var(--font-size-lg);
+            font-weight: 600;
+            letter-spacing: 0.03em;
+        }
+
+        nav {
+            background: var(--warm-sand);
+            padding: var(--spacing-xs) var(--spacing-lg);
+            display: flex;
+            gap: var(--spacing-md);
+            border-bottom: 1px solid var(--header-charcoal);
+        }
+
+        nav a {
+            text-decoration: none;
+            color: var(--header-charcoal);
+            font-weight: 500;
+            padding: var(--spacing-xs) var(--spacing-sm);
+            border-radius: 0.4rem;
+            transition: background 0.2s;
+        }
+
+        nav a:hover, nav a:focus {
+            background: var(--dusty-rose);
+            color: var(--crisp-white);
+        }
+
+        main {
+            max-width: 1100px;
+            margin: var(--spacing-lg) auto;
+            padding: 0 var(--spacing-lg);
+            display: flex;
+            flex-direction: column;
+            gap: var(--spacing-lg);
+        }
+
+        h1 {
+            font-size: var(--font-size-xl);
+            font-weight: 700;
+            margin-bottom: var(--spacing-sm);
+            color: var(--header-charcoal);
+            letter-spacing: 0.02em;
+        }
+
+        section {
+            margin-bottom: var(--spacing-lg);
+            background: var(--crisp-white);
+            border-radius: var(--border-radius);
+            box-shadow: var(--card-shadow);
+            padding: var(--spacing-md);
+        }
+
+        .section-title {
+            font-size: var(--font-size-lg);
+            font-weight: 600;
+            color: var(--terracotta);
+            margin-bottom: var(--spacing-sm);
+        }
+
+        /* KPI Cards */
+        .card-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(230px, 1fr));
+            gap: var(--spacing-md);
+            margin-bottom: var(--spacing-md);
+        }
+
+        .kpi-card {
+            background: var(--warm-sand);
+            border-radius: var(--border-radius);
+            box-shadow: var(--card-shadow);
+            padding: var(--spacing-md);
+            display: flex;
+            flex-direction: column;
+            gap: var(--spacing-xs);
+        }
+
+        .kpi-card h3 {
+            margin: 0;
+            color: var(--header-charcoal);
+            font-size: 1.1rem;
+            font-weight: 500;
+        }
+
+        .kpi-card p {
+            margin: 0;
+            font-size: 0.95rem;
+            color: var(--text-muted);
+        }
+
+        /* Table Styles */
+        .table-container {
+            width: 100%;
+            overflow-x: auto;
+            margin-top: var(--spacing-md);
+        }
+
+        table {
+            border-collapse: collapse;
+            width: 100%;
+            min-width: 700px;
+            background: var(--crisp-white);
+            font-size: 0.98rem;
+        }
+
+        thead {
+            background: var(--table-header-bg);
+        }
+
+        th, td {
+            padding: var(--spacing-xs) var(--spacing-sm);
+            text-align: left;
+        }
+
+        th {
+            color: var(--header-charcoal);
+            font-weight: 600;
+            cursor: pointer;
+            user-select: none;
+        }
+
+        tr {
+            transition: background 0.2s;
+        }
+
+        tbody tr:nth-child(even) {
+            background: var(--table-row-alt);
+        }
+
+        tbody tr:hover {
+            background: var(--table-hover);
+        }
+
+        /* Chart Section */
+        .chart-container {
+            width: 100%;
+            max-width: 460px;
+            margin: 0 auto;
+            padding: var(--spacing-md) 0;
+        }
+
+        /* List Styles */
+        ul.priorities-list {
+            margin: var(--spacing-sm) 0 0 0;
+            padding-left: var(--spacing-md);
+        }
+
+        ul.priorities-list li {
+            margin-bottom: var(--spacing-xs);
+            font-size: 1rem;
+            color: var(--header-charcoal);
+        }
+
+        /* Buttons */
+        .btn {
+            background: var(--dusty-rose);
+            color: var(--crisp-white);
+            border: none;
+            border-radius: 0.5rem;
+            padding: var(--spacing-xs) var(--spacing-md);
+            font-weight: 500;
+            cursor: pointer;
+            box-shadow: 0 1px 4px rgba(206,127,164,0.10);
+            transition: background 0.2s;
+        }
+
+        .btn:hover, .btn:focus {
+            background: var(--header-charcoal);
+        }
+
+        /* Footnotes */
+        .footnotes {
+            font-size: 0.9rem;
+            color: var(--text-muted);
+            margin-top: var(--spacing-lg);
+        }
+
+        .footnotes ol {
+            margin: 0;
+            padding-left: var(--spacing-md);
+        }
+
+        .footnotes li {
+            margin-bottom: var(--spacing-xs);
+        }
+
+        /* Footer */
+        footer {
+            background: var(--warm-sand);
+            color: var(--header-charcoal);
+            text-align: center;
+            padding: var(--spacing-md) var(--spacing-lg);
+            font-size: 0.95rem;
+            border-top: 1px solid var(--header-charcoal);
+        }
+
+        /* Responsive */
+        @media (max-width: 900px) {
+            main {
+                padding: 0 var(--spacing-sm);
+            }
+            .card-grid {
+                grid-template-columns: 1fr 1fr;
+            }
+        }
+
+        @media (max-width: 600px) {
+            header {
+                flex-direction: column;
+                align-items: flex-start;
+                gap: var(--spacing-xs);
+                padding: var(--spacing-sm) var(--spacing-sm);
+            }
+            .sgmc-title {
+                font-size: 1.2rem;
+            }
+            nav {
+                padding: var(--spacing-xs) var(--spacing-sm);
+                gap: var(--spacing-xs);
+                font-size: 0.97rem;
+            }
+            main {
+                padding: 0 var(--spacing-xs);
+            }
+            .card-grid {
+                grid-template-columns: 1fr;
+            }
+            .chart-container {
+                max-width: 100%;
+                padding: var(--spacing-sm) 0;
+            }
+            table {
+                font-size: 0.95rem;
+            }
+        }
+    </style>
+</head>
+<body>
+    <header>
+        <span class="sgmc-logo">
+            <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 54 54" aria-label="SGMC Logo">
+                <circle cx="27" cy="27" r="25" fill="#F2E9DC" stroke="#585063" stroke-width="2"/>
+                <path d="M27 14 v26 M14 27 h26" stroke="#E7996C" stroke-width="4" stroke-linecap="round"/>
+                <circle cx="27" cy="27" r="7" fill="#CE7FA4" stroke="#585063" stroke-width="2"/>
+            </svg>
+        </span>
+        <span class="sgmc-title">St. Gabriel Medical Center</span>
+    </header>
+    <nav aria-label="Main navigation">
+        <a href="#overview">Overview</a>
+        <a href="#initiatives">Initiatives</a>
+        <a href="#table">Table</a>
+        <a href="#chart">Chart</a>
+        <a href="#priorities">Priorities</a>
+        <a href="#references">References</a>
+    </nav>
+    <main>
+        <h1>Strategic Initiatives Portal</h1>
+        <section id="overview">
+            <h2 class="section-title">Overview</h2>
+            <p>
+                Welcome to the Strategic Initiatives Portal for St. Gabriel Medical Center (SGMC). This dashboard is designed to provide staff, leadership, and stakeholders with a transparent view of our ongoing and planned initiatives, supporting our mission of compassionate care, operational excellence, and continuous improvement across all departments.
+            </p>
+        </section>
+
+        <section id="initiatives">
+            <h2 class="section-title">SGMC Strategic Initiatives</h2>
+            <div class="card-grid">
+                <article class="kpi-card">
+                    <h3>Operational</h3>
+                    <p>
+                        <strong>Example:</strong> Lean workflow redesign in patient admissions to reduce wait times.
+                    </p>
+                </article>
+                <article class="kpi-card">
+                    <h3>Clinical</h3>
+                    <p>
+                        <strong>Example:</strong> Launch of Telemedicine services for rural outreach.
+                    </p>
+                </article>
+                <article class="kpi-card">
+                    <h3>Financial</h3>
+                    <p>
+                        <strong>Example:</strong> Implementation of cost optimization software for supply chain management.
+                    </p>
+                </article>
+                <article class="kpi-card">
+                    <h3>Compliance</h3>
+                    <p>
+                        <strong>Example:</strong> HIPAA refresher training for all staff members.
+                    </p>
+                </article>
+            </div>
+        </section>
+
+        <section id="table">
+            <h2 class="section-title">Initiative Summary Table</h2>
+            <div class="table-container">
+                <table aria-label="List of Strategic Initiatives">
+                    <thead>
+                        <tr>
+                            <th data-sort="string">Initiative</th>
+                            <th data-sort="string">Category</th>
+                            <th data-sort="string">Lead Department</th>
+                            <th data-sort="string">Status</th>
+                            <th data-sort="number">Completion (%)</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <tr>
+                            <td>Lean Admissions Workflow</td>
+                            <td>Operational</td>
+                            <td>Admissions</td>
+                            <td>Ongoing</td>
+                            <td>75</td>
+                        </tr>
+                        <tr>
+                            <td>Telemedicine Outreach</td>
+                            <td>Clinical</td>
+                            <td>Telehealth</td>
+                            <td>Completed</td>
+                            <td>100</td>
+                        </tr>
+                        <tr>
+                            <td>Supply Chain Optimization</td>
+                            <td>Financial</td>
+                            <td>Finance</td>
+                            <td>Ongoing</td>
+                            <td>60</td>
+                        </tr>
+                        <tr>
+                            <td>HIPAA Refresher Training</td>
+                            <td>Compliance</td>
+                            <td>HR</td>
+                            <td>Planned</td>
+                            <td>0</td>
+                        </tr>
+                        <tr>
+                            <td>Electronic Health Record Upgrade</td>
+                            <td>Clinical</td>
+                            <td>IT</td>
+                            <td>Ongoing</td>
+                            <td>40</td>
+                        </tr>
+                        <tr>
+                            <td>Energy Efficiency Audit</td>
+                            <td>Operational</td>
+                            <td>Facilities</td>
+                            <td>Planned</td>
+                            <td>0</td>
+                        </tr>
+                        <tr>
+                            <td>Cost Reduction Initiative</td>
+                            <td>Financial</td>
+                            <td>Finance</td>
+                            <td>Completed</td>
+                            <td>100</td>
+                        </tr>
+                        <tr>
+                            <td>Policy Documentation Update</td>
+                            <td>Compliance</td>
+                            <td>Legal</td>
+                            <td>Ongoing</td>
+                            <td>50</td>
+                        </tr>
+                    </tbody>
+                </table>
+            </div>
+        </section>
+
+        <section id="chart">
+            <h2 class="section-title">Initiative Completion Rates by Category</h2>
+            <div class="chart-container">
+                <canvas id="completionChart" width="400" height="400" aria-label="Pie chart of completion rates"></canvas>
+            </div>
+        </section>
+
+        <section id="priorities">
+            <h2 class="section-title">2024 Strategic Priorities</h2>
+            <ul class="priorities-list">
+                <li>Expand Telemedicine access for underserved communities</li>
+                <li>Complete EHR system upgrade with enhanced security features</li>
+                <li>Achieve 90% staff training compliance for HIPAA regulations</li>
+                <li>Reduce patient admission wait times by 30%</li>
+                <li>Optimize supply chain costs by 15%</li>
+                <li>Conduct hospital-wide energy efficiency audit</li>
+            </ul>
+        </section>
+
+        <section id="references">
+            <h2 class="section-title">References</h2>
+            <p>
+                For detailed policy frameworks and compliance documentation, refer to SGMC's official policy repository.<sup><a href="#fn1" id="ref1">1</a></sup>
+            </p>
+        </section>
+
+    
+    </main>
+    <footer>
+        &copy; 2024 St. Gabriel Medical Center | Internal Policy Portal<br>
+        Author: St. Gabriel Medical Center &mdash; Created: June 26, 2024
+    </footer>
+    <script>
+        // Chart.js Donut Chart for Initiative Completion by Category
+        const completionData = {
+            labels: ['Operational', 'Clinical', 'Financial', 'Compliance'],
+            datasets: [{
+                data: [75, 70, 80, 25], // Average completion % by category (synthetic)
+                backgroundColor: [
+                    '#E7996C', // Terracotta
+                    '#F2E9DC', // Sand
+                    '#CE7FA4', // Dusty Rose
+                    '#585063'  // Charcoal
+                ],
+                borderWidth: 2,
+                borderColor: '#FFFFFF',
+            }]
+        };
+
+        const ctx = document.getElementById('completionChart').getContext('2d');
+        new Chart(ctx, {
+            type: 'doughnut',
+            data: completionData,
+            options: {
+                responsive: true,
+                plugins: {
+                    legend: {
+                        display: true,
+                        position: 'bottom',
+                        labels: {
+                            color: '#585063',
+                            font: {
+                                size: 14,
+                                family: "'Segoe UI', 'Roboto', Arial, sans-serif",
+                                weight: 'bold'
+                            }
+                        }
+                    },
+                    title: {
+                        display: true,
+                        text: 'Average Completion Rate (%)',
+                        color: '#585063',
+                        font: {
+                            size: 18,
+                            weight: 'bold'
+                        }
+                    }
+                }
+            }
+        });
+
+        // Accessible table sorting (basic, for demonstration)
+        document.querySelectorAll('th').forEach(th => {
+            th.addEventListener('click', function () {
+                const table = th.closest('table');
+                const tbody = table.querySelector('tbody');
+                const rows = Array.from(tbody.querySelectorAll('tr'));
+                const idx = Array.from(th.parentNode.children).indexOf(th);
+                const sortType = th.getAttribute('data-sort');
+                let dir = th.classList.contains('sorted-asc') ? -1 : 1;
+
+                table.querySelectorAll('th').forEach(th2 => th2.classList.remove('sorted-asc', 'sorted-desc'));
+                th.classList.add(dir === 1 ? 'sorted-asc' : 'sorted-desc');
+
+                rows.sort((a, b) => {
+                    let aText = a.children[idx].textContent.trim();
+                    let bText = b.children[idx].textContent.trim();
+                    if (sortType === 'number') {
+                        return dir * (parseFloat(aText) - parseFloat(bText));
+                    }
+                    return dir * aText.localeCompare(bText);
+                });
+
+                rows.forEach(row => tbody.appendChild(row));
+            });
+        });
+    </script>
+</body>
+</html>

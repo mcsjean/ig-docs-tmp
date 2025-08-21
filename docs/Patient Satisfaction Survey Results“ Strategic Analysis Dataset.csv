@@ -1,0 +1,66 @@
+Patient_ID,Visit_Date,Department,Provider_Type,Wait_Time_Minutes,Staff_Communication_Score,Courtesy_Respect_Score,Care_Explanation_Score,Cleanliness_Score,Safety_Confidence_Score,Overall_Satisfaction_Score,Would_Recommend,Follow_Up_Provided,Discharge_Instructions_Clarity,Billing_Experience_Score,Technology_Usefulness,Repeat_Visit_Intention,Open_Comment,Survey_Completion_Channel,Survey_Timestamp
+P0001,6/11/2025,Radiology,PA/NP,106,5,4,3,1,4,9,No,Yes,4,3,3,No,Room was not very clean.,Portal,6/11/2025 17:13
+P0002,5/19/2025,Outpatient,Physician,97,5,5,5,2,2,7,No,No,4,4,3,No,Doctor explained everything clearly.,Phone,5/19/2025 9:48
+P0003,6/15/2025,ICU,PA/NP,35,1,3,4,1,4,9,Yes,Yes,4,2,5,No,Technology made check-in easier.,Phone,6/15/2025 10:45
+P0004,5/10/2025,ER,Technician,81,4,4,3,1,1,8,Yes,No,1,1,2,No,Felt safe and cared for.,Phone,5/10/2025 9:45
+P0005,6/27/2025,Med-Surg A,Technician,63,3,2,2,2,2,3,No,No,4,4,2,No,Room was not very clean.,Email,6/27/2025 11:34
+P0006,6/7/2025,Med-Surg B,Physician,13,4,4,3,1,1,8,Yes,No,2,3,2,No,Wait time was longer than expected.,Portal,6/7/2025 13:02
+P0007,6/18/2025,Outpatient,Physician,106,1,5,2,2,5,3,Yes,Yes,1,2,5,No,Staff were very attentive.,Portal,6/18/2025 11:37
+P0008,6/27/2025,Outpatient,Technician,59,5,4,1,2,5,5,Yes,Yes,5,5,1,No,Technology made check-in easier.,Portal,6/27/2025 13:59
+P0009,6/24/2025,Outpatient,Nurse,22,5,1,5,4,3,8,No,Yes,2,2,5,No,Technology made check-in easier.,Kiosk,6/24/2025 9:42
+P0010,6/2/2025,Inpatient,Physician,31,2,2,4,2,1,2,Yes,No,1,1,1,Yes,Staff were very attentive.,Phnoe,6/2/2025 19:02
+P0011,5/7/2025,ER,PA/NP,46,5,4,1,5,2,2,No,Yes,5,5,1,Yes,Billing process was confusing.,Email,5/7/2025 18:30
+P0012,5/4/2025,Outpatient,Physician,104,5,3,4,5,2,10,No,No,1,2,4,Yes,Wait time was longer than expected.,Portal,5/4/2025 14:43
+P0013,5/4/2025,Ambulatory,Physician,11,1,2,4,3,1,7,No,No,4,5,2,No,Felt safe and cared for.,Phone,5/4/2025 16:48
+P0014,6/10/2025,Radiology,Physician,59,4,4,4,2,4,9,Yes,Yes,5,1,5,No,Technology made check-in easier.,Email,6/10/2025 11:54
+P0015,6/11/2025,Med-Surg B,Nurse,22,4,1,1,1,5,2,No,Yes,1,2,5,No,Doctor explained everything clearly.,Phone,6/11/2025 18:39
+P0016,6/29/2025,ER,Physician,101343324,1,3,3,5,4,3,No,No,2,3,4,No,Billing process was confusing.,Portal,6/29/2025 19:34
+P0017,6/27/2025,Med-Surg A,Nurse,86,5,1,2,5,3,2,No,No,3,5,4,Yes,Great communication from nurses.,Kiosk,6/27/2025 8:28
+P0018,5/17/2025,ER,Technician,7,4,5,1,3,5,1,No,No,1,4,1,Yes,Room was not very clean.,Portal,5/17/2025 15:53
+P0019,5/8/2025,Ambulatory,Technician,88,5,5,2,1,2,8,No,Yes,2,3,5,No,Doctor explained everything clearly.,Kiosk,5/8/2025 16:21
+P0020,6/8/2025,ER,Technician,108,1,3,1,1,5,9,Yes,No,5,4,5,No,Technology made check-in easier.,Portal,6/8/2025 9:19
+P0021,6/1/2025,Inpatient,Nurse,65,3,5,3,4,5,10,No,Yes,5,3,2,Yes,Great communication from nurses.,Portal,6/1/2025 8:41
+P0022,6/29/2025,ER,PA/NP,61,3,3,5,2,5,2,Yes,No,3,4,5,Yes,Billing process was confusing.,Email,6/29/2025 17:58
+P0023,27/6/2025,Med-Surg B,PA/NP,78,5,1,4,2,2,8,Yes,No,4,4,3,Yes,Discharge instructions were helpful.,Kiosk,6/27/2025 19:35
+P0024,5/23/2025,Med-Surg B,Nurse,93,4,2,4,4,4,7,No,Yes,1,1,4,Yes,Great communication from nurses.,Phone,5/23/2025 13:18
+P0025,5/13/2025,Inpatient,Physician,73,3,2,5,5,3,4,Yes,Yes,2,1,1,No,Technology made check-in easier.,Email,5/13/2025 17:52
+P0026,6/14/2025,Ambulatory,Nurse,97,5,1,3,5,1,10,No,No,3,4,3,No,Billing process was confusing.,Kiosk,6/14/2025 14:28
+P0027,6/27/2025,Radiology,PA/NP,16,5,2,3,4,3,4,Yes,No,2,2,5,Yes,Technology made check-in easier.,Portal,6/27/2025 11:40
+P0028,6/5/2025,ER,Technician,94,2,4,5,1,4,10,No,Yes,1,5,2,No,Billing process was confusing.,Kiosk,6/5/2025 19:07
+P0029,6/2/2025,ICU,Physician,38,2,2,3,2,4,9,Yes,Yes,2,5,4,No,Technology made check-in easier.,Email,6/2/2025 16:04
+P0030,6/5/2025,Radiology,Physician,79,2,2,3,1,5,4,No,No,1,3,5,No,Great communication from nurses.,Phone,6/5/2025 10:45
+P0031,5/27/2025,Inpatient,PA/NP,108,4,4,4,5,5,7,No,No,4,1,1,Yes,Staff were very attentive.,Portal,5/27/2025 13:48
+P0032,6/20/2025,ER,Physician,86,1,4,3,2,4,2,Yes,Yes,5,1,4,Yes,Great communication from nurses.,Portal,6/20/2025 16:49
+P0033,5/10/2025,Inpatient,Technician,58,4,2,5,4,3,1,Yes,No,3,4,3,No,Discharge instructions were helpful.,Phone,5/10/2025 9:49
+P0034,6/6/2025,Med-Surg B,Physician,16,2,2,4,4,3,5,No,No,2,4,3,Yes,Room was not very clean.,Kiosk,6/6/2025 9:52
+P0035,5/26/2025,Med-Surg A,Physician,115,2,1,5,4,1,1,No,Yes,5,3,3,Yes,Discharge instructions were helpful.,Kiosk,5/26/2025 11:52
+P0036,6/6/2025,ER,Nurse,69,5,4,3,1,3,10,Yes,No,4,5,5,No,Doctor explained everything clearly.,Kiosk,6/6/2025 17:18
+P0037,6/8/2025,ER,PA/NP,80,1,4,2,5,3,4,No,No,1,2,3,Yes,Great communication from nurses.,Kiosk,6/8/2025 12:56
+P0038,6/26/2025,Outpatient,PA/NP,55,3,3,5,4,3,8,Yes,Yes,1,2,3,Yes,Billing process was confusing.,Portal,6/26/2025 15:55
+P0039,6/18/2025,ICU,PA/NP,52,2,5,5,1,1,2,No,No,2,1,2,Yes,Would recommend to others.,Portal,6/18/2025 15:13
+P0040,6/14/2025,Radiology,Nurse,42,4,1,4,5,1,3,Yes,Yes,2,2,1,No,Doctor explained everything clearly.,Phone,6/14/2025 8:10
+P0041,5/6/2025,Med-Surg B,PA/NP,24,4,1,4,4,3,5,Yes,Yes,2,3,4,Yes,Wait time was longer than expected.,Phone,5/6/2025 13:53
+P0042,6/17/2025,Med-Surg B,Nurse,60,1,2,4,2,1,9,Yes,No,1,3,3,Yes,Doctor explained everything clearly.,Portal,6/17/2025 17:19
+P0043,5/16/2025,Outpatient,Nurse,76,3,3,2,5,3,6,Yes,Yes,3,2,2,No,Would recommend to others.,Portal,5/16/2025 11:55
+P0044,5/11/2025,Radiology,Physician,54,2,3,5,1,1,10,No,No,3,5,5,Yes,Doctor explained everything clearly.,Kiosk,5/11/2025 11:00
+P0045,5/20/2025,Outpatient,PA/NP,106,3,4,3,2,1,2,No,No,1,2,1,No,Discharge instructions were helpful.,Portal,5/20/2025 17:57
+P0046,5/17/2025,Inpatient,Technician,118,3,1,2,5,2,3,Yes,Yes,3,3,3,No,Room was not very clean.,Email,5/17/2025 18:28
+P0047,5/2/2025,Inpatient,Nurse,37,5,2,2,2,4,5,Yes,No,5,2,2,No,Technology made check-in easier.,Email,5/2/2025 16:50
+P0048,5/19/2025,Inpatient,Nurse,46,3,3,4,1,3,7,Yes,No,4,2,1,Yes,Doctor explained everything clearly.,Portal,5/19/2025 17:31
+P0049,5/23/2025,Med-Surg A,Physician,27,5,5,4,2,5,10,Yes,No,4,2,5,No,Doctor explained everything clearly.,Phone,5/23/2025 11:58
+P0050,6/6/2025,Med-Surg B,Nurse,62,1,5,5,5,1,2,No,Yes,3,5,2,No,Doctor explained everything clearly.,Phone,6/6/2025 14:39
+P0051,6/10/2025,ER,PA/NP,20,5,4,1,4,3,5,No,No,3,5,4,No,Staff were very attentive.,Phone,6/10/2025 10:34
+P0052,6/27/2025,Med-Surg B,Technician,80,4,2,5,3,1,4,Yes,No,1,4,1,No,Staff were very attentive.,Kiosk,6/27/2025 15:45
+P0053,6/14/2025,Med-Surg A,PA/NP,90,4,4,2,1,5,2,No,No,1,5,2,No,Discharge instructions were helpful.,Email,6/14/2025 20:51
+P0054,6/17/2025,Inpatient,Physician,31,1,2,2,2,3,5,Yes,Yes,4,4,2,Yes,Felt safe and cared for.,Email,6/17/2025 8:43
+P0055,5/1/2025,Outpatient,Physician,96,4,1,4,3,4,7,Yes,No,2,1,4,No,Would recommend to others.,Email,5/1/2025 10:30
+P0056,5/10/2025,Inpatient,Technician,71,4,2,3,3,4,2,No,No,1,1,4,No,Room was not very clean.,Phone,5/10/2025 12:49
+P0057,5/5/2025,Outpatient,Technician,35,1,5,2,5,2,9,No,No,5,1,4,Yes,Wait time was longer than expected.,Email,5/5/2025 15:05
+P0058,6/12/2025,Ambulatory,PA/NP,79,1,2,2,5,3,5,Yes,Yes,1,5,4,Yes,Would recommend to others.,Kiosk,6/12/2025 9:08
+P0059,5/22/2025,Radiology,Physician,102,1,3,5,5,2,8,Yes,No,5,5,4,Yes,Wait time was longer than expected.,Portal,5/22/2025 19:06
+P0060,6/12/2025,Med-Surg B,PA/NP,13,4,4,1,5,5,5,No,Yes,3,3,4,No,Would recommend to others.,Phone,6/12/2025 16:10
+P0061,6/10/2025,Outpatient,PA/NP,19,5,1,3,4,5,8,Yes,No,5,3,3,No,Doctor explained everything clearly.,Phone,6/10/2025 13:49
+P0062,5/31/2025,ER,Nurse,20,2,3,1,2,2,7,Yes,No,4,3,1,Yes,Billing process was confusing.,Portal,5/31/2025 18:37
+P0063,5/8/2025,Med-Surg A,Nurse,20,1,2,4,1,2,2,Yes,Yes,2,1,1,No,Would recommend to others.,Portal,5/8/2025 10:26
+P0064,5/29/2025,ER,PA/NP,88,3,5,2,3,2,10,Yes,Yes,4,1,2,Yes,Would recommend to others.,Kiosk,5/29/2025 10:04
+P0065,5/15/2025,Radiology,Physician,19,2,1,2,3,5,10,Yes,Yes,1,3,4,Yes,Doctor explained everything clearly.,Portal,5/15/2025 19:47

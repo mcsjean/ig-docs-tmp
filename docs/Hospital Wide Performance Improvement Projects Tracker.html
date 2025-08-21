@@ -1,0 +1,935 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Hospital-Wide Performance Improvement Projects Tracker – St. Gabriel Medical Center</title>
+    <meta name="description" content="Monitor, filter, and analyze hospital-wide performance improvement projects at St. Gabriel Medical Center. Track project progress, risks, KPIs, and strategic alignment with executive-ready insights.">
+    <meta name="author" content="St. Gabriel Medical Center PMO Team">
+    <meta name="last-updated" content="2024-06-01">
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+    <style>
+        :root {
+            --sgmc-green: #2ca96c;
+            --sgmc-light-green: #e9f7ef;
+            --sgmc-dark-green: #206b48;
+            --primary-blue: #007bff;
+            --light-blue: #e0f2fe;
+            --dark-grey: #495057;
+            --light-grey: #f8f9fa;
+            --success-green: #28a745;
+            --danger-red: #dc3545;
+            --warning-orange: #ffc107;
+            --amber: #ff9800;
+            --table-header-bg: #e9f7ef;
+            --table-row-odd: #f4f8fb;
+            --table-row-even: #ffffff;
+            --box-shadow: 0 2px 8px rgba(44, 169, 108, 0.12);
+            --font-family: 'Segoe UI', 'Roboto', Arial, sans-serif;
+            --header-font-size: 2.1rem;
+            --section-title-font-size: 1.25rem;
+            --body-font-size: 1rem;
+            --card-padding: 1.5rem;
+            --border-radius: 0.7rem;
+            --focus-outline: 2px solid var(--primary-blue);
+        }
+        html, body {
+            margin: 0;
+            padding: 0;
+            font-family: var(--font-family);
+            background: var(--light-grey);
+            color: var(--dark-grey);
+            font-size: var(--body-font-size);
+        }
+        header[role="banner"] {
+            background: var(--sgmc-green);
+            color: #fff;
+            padding: 1.5rem 2rem 1rem 2rem;
+            display: flex;
+            align-items: center;
+            box-shadow: var(--box-shadow);
+            position: sticky;
+            top: 0;
+            z-index: 100;
+        }
+        .logo-title {
+            display: flex;
+            align-items: center;
+            gap: 1rem;
+        }
+        .sgmc-logo {
+            width: 64px;
+            height: 64px;
+            flex-shrink: 0;
+        }
+        h1 {
+            margin: 0;
+            font-size: var(--header-font-size);
+            font-weight: 700;
+            letter-spacing: 0.02em;
+        }
+        nav[aria-label="Page navigation"] {
+            background: var(--sgmc-light-green);
+            padding: 0.5rem 2rem;
+            display: flex;
+            gap: 2rem;
+            font-size: 1rem;
+            border-bottom: 1px solid var(--sgmc-green);
+        }
+        nav a {
+            text-decoration: none;
+            color: var(--sgmc-dark-green);
+            font-weight: 500;
+            padding: 0.2rem 0.5rem;
+            border-radius: 0.3rem;
+            transition: background 0.2s, color 0.2s;
+        }
+        nav a:hover, nav a:focus {
+            background: var(--primary-blue);
+            color: #fff;
+            outline: var(--focus-outline);
+        }
+        main {
+            padding: 2rem;
+            max-width: 1200px;
+            margin: 0 auto;
+            display: flex;
+            flex-direction: column;
+            gap: 2.5rem;
+        }
+        section {
+            background: #fff;
+            border-radius: var(--border-radius);
+            box-shadow: var(--box-shadow);
+            padding: var(--card-padding);
+            margin-bottom: 0.5rem;
+        }
+        .section-title {
+            font-size: var(--section-title-font-size);
+            font-weight: 600;
+            color: var(--sgmc-dark-green);
+            margin-bottom: 1rem;
+        }
+        .priorities-list {
+            margin-top: 0.5rem;
+            margin-bottom: 1.5rem;
+        }
+        .filters-form {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+            gap: 1.5rem;
+            align-items: end;
+        }
+        fieldset {
+            border: none;
+            padding: 0;
+            margin: 0;
+            min-width: 0;
+        }
+        legend {
+            font-weight: 600;
+            color: var(--sgmc-dark-green);
+            margin-bottom: 0.5rem;
+            font-size: 1rem;
+        }
+        label {
+            display: block;
+            margin-bottom: 0.4rem;
+        }
+        select, input[type="search"] {
+            width: 100%;
+            padding: 0.5rem;
+            border: 1px solid var(--sgmc-green);
+            border-radius: 0.4rem;
+            background: var(--sgmc-light-green);
+            font-size: 1rem;
+            transition: border 0.2s;
+        }
+        select:focus, input[type="search"]:focus {
+            outline: var(--focus-outline);
+            border-color: var(--primary-blue);
+        }
+        .projects-table-container {
+            overflow-x: auto;
+            width: 100%;
+        }
+        table[aria-label="Projects Table"] {
+            border-collapse: collapse;
+            width: 100%;
+            min-width: 900px;
+            background: #fff;
+        }
+        thead {
+            position: sticky;
+            top: 0;
+            background: var(--table-header-bg);
+            z-index: 2;
+        }
+        th, td {
+            padding: 0.85rem 1rem;
+            text-align: left;
+        }
+        th {
+            background: var(--table-header-bg);
+            color: var(--sgmc-dark-green);
+            font-weight: 600;
+            border-bottom: 2px solid var(--sgmc-green);
+            cursor: pointer;
+            user-select: none;
+        }
+        td {
+            border-bottom: 1px solid #e0e0e0;
+        }
+        tbody tr:nth-child(odd) {
+            background: var(--table-row-odd);
+        }
+        tbody tr:nth-child(even) {
+            background: var(--table-row-even);
+        }
+        tbody tr:hover {
+            background: var(--light-blue);
+        }
+        .rag-indicator {
+            display: inline-block;
+            width: 1.1em;
+            height: 1.1em;
+            border-radius: 50%;
+            vertical-align: middle;
+            margin-right: 0.4em;
+            border: 2px solid #fff;
+            box-shadow: 0 1px 3px rgba(44, 169, 108, 0.10);
+        }
+        .rag-green { background: var(--success-green); }
+        .rag-amber { background: var(--warning-orange); }
+        .rag-red { background: var(--danger-red); }
+        .tooltip {
+            position: relative;
+            cursor: help;
+        }
+        .tooltip-text {
+            visibility: hidden;
+            background: var(--dark-grey);
+            color: #fff;
+            text-align: left;
+            border-radius: 0.4rem;
+            padding: 0.6em 1em;
+            position: absolute;
+            z-index: 10;
+            bottom: 125%;
+            left: 50%;
+            transform: translateX(-50%);
+            opacity: 0;
+            transition: opacity 0.3s;
+            font-size: 0.92em;
+            width: max-content;
+            max-width: 260px;
+        }
+        .tooltip:focus .tooltip-text, .tooltip:hover .tooltip-text {
+            visibility: visible;
+            opacity: 1;
+        }
+        .kpi-charts-grid {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 2rem;
+        }
+        .chart-card {
+            background: var(--sgmc-light-green);
+            border-radius: var(--border-radius);
+            box-shadow: var(--box-shadow);
+            padding: 1.5rem;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+        }
+        .chart-title {
+            font-weight: 600;
+            color: var(--sgmc-dark-green);
+            margin-bottom: 1rem;
+        }
+        canvas {
+            max-width: 100%;
+            height: 320px !important;
+            outline: none;
+        }
+        .risks-list {
+            margin-top: 1rem;
+            margin-bottom: 1rem;
+        }
+        .sources-list {
+            margin-top: 0.5rem;
+            margin-bottom: 1rem;
+        }
+        .footnotes {
+            font-size: 0.95em;
+            color: var(--dark-grey);
+            margin-top: 1rem;
+        }
+        .footnotes ol {
+            padding-left: 1.5em;
+        }
+        .footnotes a {
+            color: var(--primary-blue);
+            text-decoration: underline;
+        }
+        .footnotes a:hover, .footnotes a:focus {
+            color: var(--sgmc-green);
+        }
+        @media (max-width: 900px) {
+            .kpi-charts-grid {
+                grid-template-columns: 1fr;
+            }
+            main {
+                padding: 1rem;
+            }
+            header[role="banner"], nav {
+                padding-left: 1rem;
+                padding-right: 1rem;
+            }
+        }
+        @media (max-width: 700px) {
+            table {
+                font-size: 0.94rem;
+            }
+            .chart-card {
+                padding: 1rem;
+            }
+            section {
+                padding: 1rem;
+            }
+        }
+    </style>
+</head>
+<body>
+    <header role="banner">
+        <div class="logo-title">
+            <svg class="sgmc-logo" viewBox="0 0 64 64" aria-label="St. Gabriel Medical Center Logo" role="img">
+                <circle cx="32" cy="32" r="30" fill="#2ca96c" stroke="#206b48" stroke-width="3"/>
+                <path d="M32 16 v32 M16 32 h32" stroke="#fff" stroke-width="6" stroke-linecap="round"/>
+                <ellipse cx="32" cy="32" rx="13" ry="19" fill="#e9f7ef" opacity="0.8"/>
+                <text x="32" y="38" text-anchor="middle" font-size="18" fill="#206b48" font-family="Segoe UI, Arial" font-weight="bold">SG</text>
+            </svg>
+            <h1>Hospital-Wide Performance Improvement Projects Tracker</h1>
+        </div>
+    </header>
+    <nav aria-label="Page navigation">
+        <a href="#filters">Filters</a>
+        <a href="#projects">Projects Table</a>
+        <a href="#kpi-charts">KPI Charts</a>
+        <a href="#risks">Risks &amp; Mitigations</a>
+        <a href="#sources">Sources</a>
+    </nav>
+    <main>
+        <section aria-labelledby="overview-title">
+            <h2 id="overview-title" class="section-title">Overview & Purpose</h2>
+            <p>
+                Welcome to the St. Gabriel Medical Center’s Hospital-Wide Performance Improvement Projects Tracker. This dashboard empowers executive and departmental leaders to monitor, analyze, and drive progress on strategic initiatives spanning quality, experience, throughput, and cost. By consolidating project milestones, KPIs, and RAG statuses, the tracker provides a unified, actionable view of organizational performance.
+            </p>
+            <p>
+                Navigation is streamlined for clarity: use the top anchor links to jump directly to filters, project tables, KPI charts, risks and mitigations, or sources. The interactive filters section allows you to refine project lists by strategic pillar, department, quarter, and status. The sortable projects table presents key details, while the KPI charts visualize status distribution and milestone progress for ongoing initiatives.
+            </p>
+            <p>
+                This tracker is refreshed weekly to ensure data accuracy and timeliness.<sup><a href="#fn1" id="ref1">1</a></sup> All project data is sourced from the PMO tracker and validated against Quality dashboards, supporting robust governance and data integrity. Detailed definitions of RAG status, KPIs, and milestones are available in the footnotes for reference.
+            </p>
+            <p>
+                The tracker aligns directly to SGMC’s strategic pillars—Quality, Patient Experience, Throughput, and Cost Optimization. Every initiative is mapped to one or more of these goals, ensuring that improvement efforts are focused and measurable. Executive summaries and cross-cutting risk insights further reinforce strategic alignment, helping you anticipate challenges and leverage mitigation strategies.
+            </p>
+            <p>
+                To interpret the dashboard: Green indicates projects on track, Amber highlights those at risk but recoverable, and Red signals critical issues requiring urgent attention.<sup><a href="#fn2" id="ref2">2</a></sup> Milestones, KPIs, and RAG criteria are standardized and explained in the table tooltips and the definitions section. For further guidance, consult the footnotes and reference links below.
+            </p>
+            <div>
+                <strong>This Quarter's Priorities:</strong>
+                <ul class="priorities-list">
+                    <li>Advance Quality Improvement in Surgical Safety and Infection Control</li>
+                    <li>Enhance Patient Experience via Digital Engagement Platforms</li>
+                    <li>Optimize Emergency Department Throughput and Wait Times</li>
+                    <li>Implement Cost Reduction Strategies in Pharmacy and Supply Chain</li>
+                    <li>Complete Critical Milestones for Cardiac Care and Oncology Pathways</li>
+                </ul>
+            </div>
+        </section>
+        <section id="filters" aria-labelledby="filters-title">
+            <h2 id="filters-title" class="section-title">Filters</h2>
+            <form class="filters-form" aria-label="Project Filters" role="search">
+                <fieldset>
+                    <legend>Strategic Pillar</legend>
+                    <label for="pillar-filter">Pillar</label>
+                    <select id="pillar-filter" aria-label="Strategic Pillar">
+                        <option value="">All</option>
+                        <option value="Quality">Quality</option>
+                        <option value="Experience">Experience</option>
+                        <option value="Throughput">Throughput</option>
+                        <option value="Cost">Cost</option>
+                    </select>
+                </fieldset>
+                <fieldset>
+                    <legend>Department</legend>
+                    <label for="department-filter">Department</label>
+                    <select id="department-filter" aria-label="Department">
+                        <option value="">All</option>
+                        <option value="ED">Emergency Department</option>
+                        <option value="Surgery">Surgery</option>
+                        <option value="Oncology">Oncology</option>
+                        <option value="Pharmacy">Pharmacy</option>
+                        <option value="IT">IT</option>
+                        <option value="Cardiology">Cardiology</option>
+                        <option value="Quality">Quality</option>
+                    </select>
+                </fieldset>
+                <fieldset>
+                    <legend>Quarter</legend>
+                    <label for="quarter-filter">Quarter</label>
+                    <select id="quarter-filter" aria-label="Quarter">
+                        <option value="">All</option>
+                        <option value="Q1">Q1</option>
+                        <option value="Q2">Q2</option>
+                        <option value="Q3">Q3</option>
+                        <option value="Q4">Q4</option>
+                    </select>
+                </fieldset>
+                <fieldset>
+                    <legend>Status</legend>
+                    <label for="status-filter">RAG Status</label>
+                    <select id="status-filter" aria-label="RAG Status">
+                        <option value="">All</option>
+                        <option value="Green">Green</option>
+                        <option value="Amber">Amber</option>
+                        <option value="Red">Red</option>
+                    </select>
+                </fieldset>
+                <fieldset>
+                    <legend>Search</legend>
+                    <label for="search-filter">Project Search</label>
+                    <input id="search-filter" type="search" aria-label="Search Projects" placeholder="Search by project name, owner, or keyword" autocomplete="off">
+                </fieldset>
+            </form>
+            <p>
+                Use the filters above to narrow down projects by strategic pillar, department, quarter, and RAG status. Enter a keyword to search for specific projects, owners, or milestones. The table below will update dynamically to reflect your selections.<sup><a href="#fn3" id="ref3">3</a></sup> Sorting is available on all columns—click any header to reorder the table.
+            </p>
+        </section>
+        <section id="projects" aria-labelledby="projects-title">
+            <h2 id="projects-title" class="section-title">Projects Table</h2>
+            <div class="projects-table-container">
+                <table aria-label="Projects Table">
+                    <thead>
+                        <tr>
+                            <th scope="col" tabindex="0">Project</th>
+                            <th scope="col" tabindex="0">Strategic Pillar</th>
+                            <th scope="col" tabindex="0">Owner</th>
+                            <th scope="col" tabindex="0">Department</th>
+                            <th scope="col" tabindex="0">Start Date</th>
+                            <th scope="col" tabindex="0">Milestone</th>
+                            <th scope="col" tabindex="0">
+                                <span class="tooltip" tabindex="0" aria-label="RAG Status: Green, Amber, Red indicators">
+                                    RAG Status
+                                    <span class="tooltip-text" role="tooltip">
+                                        <strong>RAG:</strong> <br>
+                                        <span style="color:#28a745;">Green</span>: On track<br>
+                                        <span style="color:#ffc107;">Amber</span>: At risk, corrective action needed<br>
+                                        <span style="color:#dc3545;">Red</span>: Critical, off-track<br>
+                                        See footnote <a href="#fn2">2</a>
+                                    </span>
+                                </span>
+                            </th>
+                            <th scope="col" tabindex="0">
+                                <span class="tooltip" tabindex="0" aria-label="KPI: Key Performance Indicator">
+                                    KPI
+                                    <span class="tooltip-text" role="tooltip">
+                                        <strong>KPI:</strong> Metric used to measure project success. Examples: infection rate, patient satisfaction index, throughput time.
+                                    </span>
+                                </span>
+                            </th>
+                            <th scope="col" tabindex="0">Next Review Date</th>
+                        </tr>
+                    </thead>
+                    <tbody id="projects-tbody">
+                        <!-- Table rows will be dynamically replaced by JS for filtering/sorting -->
+                    </tbody>
+                </table>
+            </div>
+            <p>
+                Each row represents a hospital-wide improvement project. RAG status uses color-coded indicators to show project health. Hover or focus on the "RAG Status" and "KPI" headers for definitions. Click any column header to sort the table. The sticky header ensures you always see column definitions when scrolling.<sup><a href="#fn2" id="ref4">2</a></sup>
+            </p>
+        </section>
+        <section id="kpi-charts" aria-labelledby="kpi-charts-title">
+            <h2 id="kpi-charts-title" class="section-title">KPI Charts</h2>
+            <div class="kpi-charts-grid">
+                <article class="chart-card" aria-labelledby="chart-rag-status-title">
+                    <div class="chart-title" id="chart-rag-status-title">
+                        Project Distribution by RAG Status
+                    </div>
+                    <canvas id="ragStatusChart" role="img" aria-label="Stacked bar chart showing counts of projects by RAG status"></canvas>
+                </article>
+                <article class="chart-card" aria-labelledby="chart-milestone-title">
+                    <div class="chart-title" id="chart-milestone-title">
+                        Milestone Burn-Up: Progress vs Planned Timeline
+                    </div>
+                    <canvas id="milestoneBurnupChart" role="img" aria-label="Line chart showing actual completed milestones versus planned per quarter"></canvas>
+                </article>
+            </div>
+            <p>
+                The stacked bar chart visualizes project counts by RAG status (Green, Amber, Red) across strategic pillars. The burn-up chart tracks milestone completion rates against planned targets over the year, highlighting areas ahead or behind schedule. Charts are color-coded and fully accessible with descriptive legends.<sup><a href="#fn4" id="ref5">4</a></sup>
+            </p>
+        </section>
+        <section id="risks" aria-labelledby="risks-title">
+            <h2 id="risks-title" class="section-title">Risks & Mitigations</h2>
+            <p>
+                Successful delivery of performance improvement projects requires ongoing risk management and proactive mitigation. Key risks currently impacting SGMC’s initiatives include resource constraints, technology integration delays, and shifting regulatory requirements. Addressing these risks is essential for maintaining momentum and achieving strategic goals. The following summarizes the top cross-cutting risks and corresponding mitigation strategies.
+            </p>
+            <ul class="risks-list">
+                <li><strong>Staffing Shortages:</strong> <br>
+                    <em>Mitigation:</em> Implement flexible staffing models and targeted recruitment for critical departments.
+                </li>
+                <li><strong>Technology Integration Delays:</strong> <br>
+                    <em>Mitigation:</em> Prioritize high-impact digital solutions and establish vendor escalation protocols.
+                </li>
+                <li><strong>Data Quality Gaps:</strong> <br>
+                    <em>Mitigation:</em> Enhance validation processes and cross-functional data stewardship.
+                </li>
+                <li><strong>Regulatory Changes:</strong> <br>
+                    <em>Mitigation:</em> Maintain active monitoring and agile response teams for compliance updates.
+                </li>
+                <li><strong>Interdepartmental Dependencies:</strong> <br>
+                    <em>Mitigation:</em> Strengthen governance forums and clarify cross-team accountabilities.
+                </li>
+            </ul>
+            <p>
+                Risk management is integrated into project governance routines, with regular reviews and escalation protocols. Leaders are encouraged to reference mitigation strategies and work collaboratively to address emerging threats.<sup><a href="#fn5" id="ref6">5</a></sup>
+            </p>
+        </section>
+        <section id="sources" aria-labelledby="sources-title">
+            <h2 id="sources-title" class="section-title">Sources & References</h2>
+            <ul class="sources-list">
+                <li>Data refresh cadence: <strong>Weekly</strong> (latest update: 2024-06-01)</li>
+                <li>Primary sources: SGMC PMO tracker, Quality dashboards</li>
+                <li>Governance alignment: SGMC Quality Council, Executive Leadership Team</li>
+            </ul>
+            <p>
+                For detailed definitions of RAG status, KPIs, milestones, filtering instructions, and strategic pillars, see the footnotes and references below. Additional documentation is available via the PMO and Quality dashboard portals.<sup><a href="#fn3" id="ref7">3</a></sup>
+            </p>
+        </section>
+        <aside class="footnotes" aria-labelledby="footnotes-title">
+            <h2 id="footnotes-title" class="section-title">References</h2>
+            <ol>
+                <li id="fn1">Data is refreshed weekly, every Monday by 10:00 AM. <a href="#ref1" aria-label="Back to reference 1">&uarr;</a></li>
+                <li id="fn2">RAG Status: <strong>Green</strong> – On track with milestones and KPIs; <strong>Amber</strong> – At risk, action required; <strong>Red</strong> – Off track, urgent intervention needed. See <a href="#projects" aria-label="Go to Projects Table">Projects Table</a>. <a href="#ref2" aria-label="Back to reference 2">&uarr;</a></li>
+                <li id="fn3">Filters affect all table and chart data in real time. Search supports partial matches for project name, owner, or milestone. <a href="#ref3" aria-label="Back to reference 3">&uarr;</a></li>
+                <li id="fn4">Charts are color-coded: Green for on-track, Amber for at-risk, Red for off-track. Milestone burn-up chart compares completed vs. planned by quarter. <a href="#ref5" aria-label="Back to reference 4">&uarr;</a></li>
+                <li id="fn5">Risk management is reviewed monthly by the Quality Council and escalated to executive leadership as needed. <a href="#ref6" aria-label="Back to reference 5">&uarr;</a></li>
+                <li id="ref4">Sticky header: Table header remains visible when scrolling for reference. <a href="#projects" aria-label="Go to Projects Table">&uarr;</a></li>
+                <li>Strategic Pillars: <strong>Quality</strong> (clinical outcomes), <strong>Experience</strong> (patient/staff satisfaction), <strong>Throughput</strong> (operational efficiency), <strong>Cost</strong> (financial sustainability).</li>
+            </ol>
+        </aside>
+    </main>
+    <footer style="background:var(--sgmc-green);color:#fff;padding:1.2rem 2rem;text-align:center;font-size:0.98rem;border-top:1px solid var(--sgmc-dark-green);">
+        &copy; 2024 St. Gabriel Medical Center – Performance Management Office. All rights reserved.
+    </footer>
+    <script>
+        // --- Synthetic Project Data ---
+        const projectsData = [
+            {
+                project: "Surgical Safety Protocols",
+                pillar: "Quality",
+                owner: "Dr. K. Lin",
+                department: "Surgery",
+                start: "2024-01-15",
+                milestone: "Protocol rollout Phase II",
+                rag: "Green",
+                kpi: "Infection Rate &lt; 1.2%",
+                review: "2024-06-10"
+            },
+            {
+                project: "Patient E-Feedback Platform",
+                pillar: "Experience",
+                owner: "M. Delgado",
+                department: "IT",
+                start: "2024-02-01",
+                milestone: "Beta launch",
+                rag: "Amber",
+                kpi: "Satisfaction Index ≥ 85",
+                review: "2024-06-12"
+            },
+            {
+                project: "ED Throughput Optimization",
+                pillar: "Throughput",
+                owner: "J. Patel",
+                department: "ED",
+                start: "2024-03-01",
+                milestone: "Workflow redesign",
+                rag: "Red",
+                kpi: "Avg. Wait &lt; 25min",
+                review: "2024-06-08"
+            },
+            {
+                project: "Cardiac Pathway Milestone 3",
+                pillar: "Quality",
+                owner: "F. Nygaard",
+                department: "Cardiology",
+                start: "2024-01-25",
+                milestone: "Milestone 3 Completion",
+                rag: "Amber",
+                kpi: "Door-to-Balloon &lt; 60min",
+                review: "2024-06-15"
+            },
+            {
+                project: "Oncology Pathway Integration",
+                pillar: "Quality",
+                owner: "S. Gupta",
+                department: "Oncology",
+                start: "2024-02-10",
+                milestone: "EMR integration",
+                rag: "Green",
+                kpi: "Treatment Start ≤ 7 days",
+                review: "2024-06-10"
+            },
+            {
+                project: "Pharmacy Cost Reduction",
+                pillar: "Cost",
+                owner: "A. Nash",
+                department: "Pharmacy",
+                start: "2024-03-10",
+                milestone: "Supplier renegotiation",
+                rag: "Green",
+                kpi: "Unit Cost -10%",
+                review: "2024-06-11"
+            },
+            {
+                project: "Staff Handover Experience",
+                pillar: "Experience",
+                owner: "L. Chen",
+                department: "Quality",
+                start: "2024-01-20",
+                milestone: "Training modules live",
+                rag: "Green",
+                kpi: "Staff Survey ≥ 90%",
+                review: "2024-06-09"
+            },
+            {
+                project: "Supply Chain Automation",
+                pillar: "Cost",
+                owner: "E. Brown",
+                department: "IT",
+                start: "2024-04-01",
+                milestone: "Phase 1 Complete",
+                rag: "Amber",
+                kpi: "Process Time -20%",
+                review: "2024-06-13"
+            }
+        ];
+
+        // --- Filters State ---
+        const filters = {
+            pillar: '',
+            department: '',
+            quarter: '',
+            status: '',
+            search: ''
+        };
+
+        // --- Helper: Get Quarter from Date ---
+        function getQuarter(dateStr) {
+            const d = new Date(dateStr);
+            const month = d.getMonth();
+            if (month < 3) return 'Q1';
+            if (month < 6) return 'Q2';
+            if (month < 9) return 'Q3';
+            return 'Q4';
+        }
+
+        // --- Table Rendering & Filtering ---
+        const tbody = document.getElementById('projects-tbody');
+
+        function projectMatchesFilters(project) {
+            if (filters.pillar && project.pillar !== filters.pillar) return false;
+            if (filters.department && project.department !== filters.department) return false;
+            if (filters.quarter && getQuarter(project.start) !== filters.quarter) return false;
+            if (filters.status && project.rag !== filters.status) return false;
+            if (filters.search) {
+                const s = filters.search.toLowerCase();
+                return (
+                    project.project.toLowerCase().includes(s) ||
+                    project.owner.toLowerCase().includes(s) ||
+                    project.milestone.toLowerCase().includes(s)
+                );
+            }
+            return true;
+        }
+
+        // --- Table Sorting ---
+        let sortCol = null;
+        let sortAsc = true;
+
+        function sortProjects(rows, col) {
+            const colMap = {
+                "Project": "project",
+                "Strategic Pillar": "pillar",
+                "Owner": "owner",
+                "Department": "department",
+                "Start Date": "start",
+                "Milestone": "milestone",
+                "RAG Status": "rag",
+                "KPI": "kpi",
+                "Next Review Date": "review"
+            };
+            const key = colMap[col];
+            return rows.slice().sort((a, b) => {
+                let aVal = a[key], bVal = b[key];
+                // For dates, compare as Date
+                if (key === "start" || key === "review") {
+                    aVal = new Date(aVal); bVal = new Date(bVal);
+                    return sortAsc ? aVal - bVal : bVal - aVal;
+                }
+                // For RAG, custom order: Green > Amber > Red
+                if (key === "rag") {
+                    const order = { "Green": 0, "Amber": 1, "Red": 2 };
+                    return sortAsc ? order[aVal] - order[bVal] : order[bVal] - order[aVal];
+                }
+                // Alphabetical for others
+                aVal = aVal.toLowerCase(); bVal = bVal.toLowerCase();
+                if (aVal < bVal) return sortAsc ? -1 : 1;
+                if (aVal > bVal) return sortAsc ? 1 : -1;
+                return 0;
+            });
+        }
+
+        function renderTable() {
+            let filtered = projectsData.filter(projectMatchesFilters);
+            if (sortCol) {
+                const headers = Array.from(document.querySelectorAll('table thead th'));
+                const headerText = headers[sortCol].textContent.trim();
+                filtered = sortProjects(filtered, headerText);
+            }
+            tbody.innerHTML = "";
+            filtered.forEach(project => {
+                const tr = document.createElement('tr');
+                tr.innerHTML = `
+                    <td>${project.project}</td>
+                    <td>${project.pillar}</td>
+                    <td>${project.owner}</td>
+                    <td>${project.department}</td>
+                    <td>${project.start}</td>
+                    <td>${project.milestone}</td>
+                    <td>
+                        <span class="rag-indicator rag-${project.rag.toLowerCase()}" aria-label="${project.rag}"></span>
+                        ${project.rag}
+                    </td>
+                    <td>
+                        <span class="tooltip" tabindex="0" aria-label="KPI Info">${project.kpi}
+                            <span class="tooltip-text" role="tooltip">
+                                Key Performance Indicator for <strong>${project.project}</strong>: ${project.kpi}
+                            </span>
+                        </span>
+                    </td>
+                    <td>${project.review}</td>
+                `;
+                tbody.appendChild(tr);
+            });
+        }
+
+        // --- Event Listeners for Filters ---
+        document.getElementById('pillar-filter').addEventListener('change', function(e){
+            filters.pillar = e.target.value;
+            renderTable();
+            updateCharts();
+        });
+        document.getElementById('department-filter').addEventListener('change', function(e){
+            filters.department = e.target.value;
+            renderTable();
+            updateCharts();
+        });
+        document.getElementById('quarter-filter').addEventListener('change', function(e){
+            filters.quarter = e.target.value;
+            renderTable();
+            updateCharts();
+        });
+        document.getElementById('status-filter').addEventListener('change', function(e){
+            filters.status = e.target.value;
+            renderTable();
+            updateCharts();
+        });
+        document.getElementById('search-filter').addEventListener('input', function(e){
+            filters.search = e.target.value;
+            renderTable();
+            updateCharts();
+        });
+
+        // --- Sorting by Table Headers ---
+        document.querySelectorAll('table thead th').forEach((th, idx) => {
+            th.addEventListener('click', function() {
+                if (sortCol === idx) sortAsc = !sortAsc;
+                else { sortCol = idx; sortAsc = true; }
+                renderTable();
+            });
+            th.addEventListener('keydown', function(e) {
+                if (e.key === "Enter" || e.key === " ") {
+                    th.click();
+                }
+            });
+        });
+
+        // --- Chart Data Preparation ---
+        function getFilteredProjects() {
+            return projectsData.filter(projectMatchesFilters);
+        }
+
+        // Chart 1: Stacked Bar by RAG
+        let ragStatusChartInstance = null;
+        function renderRagStatusChart() {
+            const filtered = getFilteredProjects();
+            const pillars = ["Quality", "Experience", "Throughput", "Cost"];
+            const ragTypes = ["Green", "Amber", "Red"];
+            const data = pillars.map(pillar => {
+                return ragTypes.map(rag => {
+                    return filtered.filter(p => p.pillar === pillar && p.rag === rag).length;
+                });
+            });
+            const datasets = ragTypes.map((rag, i) => ({
+                label: rag,
+                data: data.map(arr => arr[i]),
+                backgroundColor: rag === "Green" ? "#28a745" : rag === "Amber" ? "#ffc107" : "#dc3545",
+                borderColor: "#fff",
+                borderWidth: 1
+            }));
+            const ctx = document.getElementById('ragStatusChart').getContext('2d');
+            if (ragStatusChartInstance) ragStatusChartInstance.destroy();
+            ragStatusChartInstance = new Chart(ctx, {
+                type: 'bar',
+                data: {
+                    labels: pillars,
+                    datasets: datasets
+                },
+                options: {
+                    plugins: {
+                        title: {
+                            display: true,
+                            text: 'Projects by Strategic Pillar and RAG Status',
+                            font: { size: 18 }
+                        },
+                        legend: {
+                            display: true,
+                            labels: {
+                                color: "#206b48",
+                                font: { weight: 'bold' }
+                            }
+                        },
+                        tooltip: {
+                            enabled: true,
+                            callbacks: {
+                                label: function(context) {
+                                    return `${context.dataset.label}: ${context.parsed.y} projects`;
+                                }
+                            }
+                        }
+                    },
+                    responsive: true,
+                    scales: {
+                        x: { stacked: true, title: { display: true, text: 'Strategic Pillar' }, ticks: { color: "#206b48" } },
+                        y: { stacked: true, title: { display: true, text: 'Project Count' }, beginAtZero: true, ticks: { color: "#206b48" } }
+                    },
+                    accessibility: {
+                        enabled: true,
+                        description: "Stacked bar chart showing counts of projects by RAG status for each strategic pillar."
+                    }
+                }
+            });
+        }
+
+        // Chart 2: Burn-up Milestones
+        let milestoneBurnupChartInstance = null;
+        function renderMilestoneBurnupChart() {
+            // Synthetic milestone completion vs planned per quarter
+            const quarters = ["Q1", "Q2", "Q3", "Q4"];
+            const planned = [2, 4, 6, 8];
+            const filtered = getFilteredProjects();
+            // Count completed milestones (simulate: milestones with Green or Amber, per start quarter)
+            let completed = [0,0,0,0];
+            filtered.forEach(p => {
+                const qIdx = quarters.indexOf(getQuarter(p.start));
+                if (p.rag === "Green" || p.rag === "Amber") completed[qIdx]++;
+            });
+            const ctx = document.getElementById('milestoneBurnupChart').getContext('2d');
+            if (milestoneBurnupChartInstance) milestoneBurnupChartInstance.destroy();
+            milestoneBurnupChartInstance = new Chart(ctx, {
+                type: 'line',
+                data: {
+                    labels: quarters,
+                    datasets: [
+                        {
+                            label: 'Planned Milestones',
+                            data: planned,
+                            borderColor: "#2ca96c",
+                            backgroundColor: "rgba(44,169,108,0.15)",
+                            borderWidth: 3,
+                            pointBackgroundColor: "#2ca96c",
+                            pointBorderColor: "#2ca96c",
+                            pointRadius: 6,
+                            fill: true,
+                            tension: 0.3
+                        },
+                        {
+                            label: 'Actual Completed',
+                            data: completed,
+                            borderColor: "#007bff",
+                            backgroundColor: "rgba(0,123,255,0.10)",
+                            borderWidth: 3,
+                            pointBackgroundColor: "#007bff",
+                            pointBorderColor: "#007bff",
+                            pointRadius: 6,
+                            fill: false,
+                            tension: 0.3
+                        }
+                    ]
+                },
+                options: {
+                    plugins: {
+                        title: {
+                            display: true,
+                            text: 'Milestone Burn-Up (Planned vs Completed)',
+                            font: { size: 18 }
+                        },
+                        legend: {
+                            display: true,
+                            labels: {
+                                color: "#206b48",
+                                font: { weight: 'bold' }
+                            }
+                        },
+                        tooltip: {
+                            enabled: true,
+                            callbacks: {
+                                label: function(context) {
+                                    return `${context.dataset.label}: ${context.parsed.y} milestones`;
+                                }
+                            }
+                        }
+                    },
+                    responsive: true,
+                    scales: {
+                        x: { title: { display: true, text: 'Quarter' }, ticks: { color: "#206b48" } },
+                        y: { title: { display: true, text: 'Milestones' }, beginAtZero: true, ticks: { color: "#206b48" }, stepSize: 1 }
+                    },
+                    accessibility: {
+                        enabled: true,
+                        description: "Line chart comparing actual milestone completions to planned per quarter."
+                    }
+                }
+            });
+        }
+
+        function updateCharts() {
+            renderRagStatusChart();
+            renderMilestoneBurnupChart();
+        }
+
+        // --- Initial Render ---
+        renderTable();
+        updateCharts();
+
+        // --- Keyboard Accessibility for Tooltips ---
+        document.querySelectorAll('.tooltip').forEach(tip => {
+            tip.addEventListener('focus', () => tip.classList.add('show'));
+            tip.addEventListener('blur', () => tip.classList.remove('show'));
+        });
+    </script>
+</body>
+</html>
